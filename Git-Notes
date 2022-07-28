@@ -154,6 +154,95 @@ or can be used to authenticate to the API over Basic Authentication.
  > expiration 30 days
  > scope ==> select repo
 
+Scenario 8: Pull files from remote repository
+
+Step1: create some new file in the remote repostiroy, which are not in your local repo
+
+Step 2: go to local repo and pull these new changes form remote
+
+here PULL ==>  Fetch the changes + Merge them with local repo and working directory
+
+git config pull.rebase false
+
+Scenario 9 : clone the remote repo to local
+
+git clone reponame
+
+Scenario 10: Forking in remote repo
+
+click on for button on github repo
+
+Scenario 11 : Branching & Merging
+
+git branch feature
+
+git checkout feature
+
+make chnages and commit on branch
+
+git checkout master
+
+git merge feature master
+
+git branch -d feature
+
+Scenario 12: Conflicts & resolve conflicts
+
+Create a file on the remote repo with a new name : demo1
+
+Step2:
+
+Sonal also working on the same file Demo1 in her local machine
+
+Step 3:
+
+Sonal want to push her demo changes from local into remote file, so that somebody can review those changes
+
+Observation: Push will not be successfull
+
+it will reject the push
+
+
+Step 4: because my push was rejected and I am asked to pull the chnages first from remote file, 
+so lets execute pull command
+
+$ git pull origin master
+
+You will get into conflict, because git donot know where to merge the chnages fetched from remote in the local file
+
+CONFLICT (add/add): Merge conflict in Demo1
+Automatic merge failed; fix conflicts and then commit the result.
+
+
+Step 5: Resolve the conflict
+
+
+Review the changes in the file locally and commit the changes so as to resolve conflict
+
+
+Step 6:
+
+Once you resolve the conflicts, push the changes to remote
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
