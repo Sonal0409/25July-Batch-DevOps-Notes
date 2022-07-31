@@ -1,0 +1,45 @@
+JAVA Installation
+
+SEE THAT YOU ARE IN ROOT DIRECTORY
+
+# yum install java-1.8.0-openjdk-devel
+# alternatives --config java
+# vim /etc/profile
+i
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.265.b01-1.amzn2.0.1.x86_64
+export PATH=$JAVA_HOME/bin:$PATH
+ESC :wq!
+# source /etc/profile
+****************************************************
+
+INSTALL JENKINS
+
+Go to https://pkg.jenkins.io/redhat-stable/
+
+and copy these commands
+
+ # sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+ # sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+    
+    yum install epel-release # repository that provides 'daemonize'
+    
+    sudo amazon-linux-extras install epel
+
+  yum install jenkins
+  
+ # systemctl start jenkins
+ # systemctl status jenkins
+ # clear
+ # cat /var/lib/jenkins/secrets/initialAdminPassword
+
+Click on install plugins
+Give username and password details
+Jenkisn is ready to use
+
+
+Creation of a Job:
+************************************
+
+#1 Jenkins --> New Item --> Job1 --> Build --> shell comand---> echo 'this is my first job'
+
+Save --> click on Build Now  --> click on build number --> click on Console to see output
