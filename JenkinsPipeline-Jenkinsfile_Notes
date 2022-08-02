@@ -1,0 +1,240 @@
+Code Based pipeline
+******************
+
+Set up tools in global tool configuration:
+
+ 1. jdk ==> myjava
+ 2. maven ==> mymaven
+
+
+Every job : common step
+
+  SCM  ==> https://github.com/Sonal0409/DevOpsCodeDemo.git
+
+Every job : maven command
+
+Job1:
+  maven command
+ compile the code => compile
+
+ connect job 1 with job2
+
+Job2: Unit testing
+
+ maven command
+ test the code => test
+
+ 
+ post build action:
+
+    convert junit report
+
+Connected to job 3
+
+Job3: Code coverage
+
+ maven command
+ coverage the code => cobertura:cobertura -Dcobertura.report.format=xml
+
+ 
+ post build action:
+
+    convert coverage report ==> cobertura
+
+Connected to job 4
+
+Job4: package
+
+ maven command
+ package the code => package
+
+Connected to job 5
+
+Job5: Code review 
+
+ maven command
+ code review  => pmd:pmd
+
+ 
+ post build action:
+
+    convert pmd.xml report
+
+
+
+We cna do all of this process in a signle by write code
+
+
+With Jenkins 1 version : scripted pipeline syntax:
+
+node{
+
+was complex
+jenkins admin has be really good in scripting because:
+
+ > there is proper structure to the script
+ > the entire script is as per the admin 
+ > script are written in DSL which is groovy based 
+ > when you executed the script, jenkisn doesnot validate the code at first
+ > if the pieline stop in middle, you have start the pipeline again from the very step, which is time consuming
+
+
+In jenkins 2 you will write the code using Declarative pipeline syntax
+
+> write script for pipeline is very easy
+
+> Declarative pipeline syntax is also groovy based and very easy to write
+
+> Declarative pipeline syntax is well defiend and there is a structure/template that admin has to follow in order to write the code
+
+> Jenkins provides a snippet generator tool, that automatically geenrates your pipeline code
+
+> beacuse we define everything in a proper structure, its easy to read and easy to write.
+
+> if you dont follow the structure given by jenkins, you will get error
+
+> when you start exeucting the pipeline ==> 
+
+   > jenkisn will validate the code give you errors
+
+  > jenskin will exeucte the code
+
+  > in case jenkisn pipeline stops in the middle, you can fix the issue and restart from that particular stage itself
+
+> piepline is execution multiple stages/tasks 
+
+  > these tasks can be executed in sequence or in parallel
+
+> jenkisn can read or fetch the pipeline code form github and execute the pipeline --> Jenkinsfile
+
+
+ Structure of writing Jenkins declarative syntax
+****************************
+  key 'value'
+
+declarative syntax consist of various blocks
+
+1. all the code will be placed inside the pipeline block
+2. In the pipeline block you will create tools block, defining what tools to be used in the pipeline
+ 
+ pipeline{
+
+  tools{
+     jdk 'myjava'
+     maven 'mymaven'
+}
+
+parameters{
+     string(name: 'repoName', defaultValue: 'https://github.com/Sonal0409/DevOpsCodeDemo.git')
+}
+
+agent any
+
+stages{
+
+   stage('Clone repo')
+    {
+      steps{
+           
+        git ${repoName}
+
+               }
+
+    }
+
+ stage('Compile the code')
+    {
+      steps{
+           
+      sh 'mvn compile'
+
+               }
+
+    }
+
+ stage('Code Review')
+    {
+      steps{
+           
+      sh 'mvn pmd:pmd'
+
+               }
+
+    }
+
+
+ stage('test the code')
+    {
+      steps{
+       echo 'Testing'    
+      sh 'mvn test'
+
+
+               }
+      
+       post{
+
+       success{
+                    junit 'target/surefire-reports/*.xml'
+               }
+                }
+    }
+
+ stage('Coverage of the code')
+    {
+      steps{
+        
+      sh 'mvn cobertura:cobertura -Dcobertura.report.format=xml'
+
+
+               }
+      
+       post{
+
+       success{
+                    cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: 'target/site/cobertura/coverage.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
+               }
+                }
+    }
+
+
+ stage('Package the code')
+    {
+      steps{
+           
+      sh 'mvn package'
+
+               }
+
+    }
+
+}
+}
+
+
+Jenkins file:
+***************
+
+Save the script in GITHUb - in a repo
+
+> Jenkins to pick the script from github and run it 
+
+   > go to the repo
+   > cretae a new file with name as Jenkinsfile
+   > In the file place your code
+
+How will jenkisn pickup this code now?
+
+   > create a job in jenkins -- template pipeline 
+
+   > select option pipeline script from SCM
+    > sCM - git
+
+    > give repo path
+
+press save
+   
+
+> Whenever there is an update on the script in github, this jenkins code should run automatically
+
+       > set up a trigger on the job
