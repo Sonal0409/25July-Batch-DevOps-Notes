@@ -124,9 +124,7 @@ declarative syntax consist of various blocks
      maven 'mymaven'
 }
 
-parameters{
-     string(name: 'repoName', defaultValue: 'https://github.com/Sonal0409/DevOpsCodeDemo.git')
-}
+
 
 agent any
 
@@ -136,7 +134,7 @@ stages{
     {
       steps{
            
-        git ${repoName}
+        git 'https://github.com/Sonal0409/DevOpsCodeDemo.git'
 
                }
 
