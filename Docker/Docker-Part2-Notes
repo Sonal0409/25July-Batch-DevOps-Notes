@@ -1,0 +1,179 @@
+Day 2:
+*********
+
+If we want to stop a container:
+
+	docker stop <containerName/id>
+
+If we want to start a container which is in Exited state
+
+	docker start <containerName/id>
+
+
+If it is an OS container, you can attach to its terminal
+
+
+ 	docker attach <containerName/id>
+
+
+if it is an application container, you can attach to its terminal
+
+	docker exec -it <containerName/id> bash
+
+OR
+
+if you want to execute a linux command on the container from the host machine
+
+
+	docker exec  <containername/id> <linuxcommand>
+
+
+
+Remove or delete containers:
+
+	docker rm -f <containername/id> <containername/id>
+
+Remove or delete all the container at once, the container may be in running status or existed
+
+	docker rm -f $(docker ps -aq)
+
+
+Remove all Images, all stopped containers
+
+	docker system prune --all
+
+Delete a single image
+
+docker rmi <imageName>
+
+Forceabily delete an Image associated to a container
+
+docker rmi -f <imageName>
+
+
+How to Access the application deployed on the container form browser of your local machine:
+***************************************************************************************
+
+** This scenario is application only to application container and not to OS container
+
+Yes, we have not deployed on the container our application code yet,
+
+But docker containers of images NGINX, HTTPD, tomcat, Wordpress, they come with an inbuilt application Page deployed on it
+
+This webpage can be accessed by the user once container is up & running
+
+On the image you can go and check in docker hub, that they are already exposed to a port number
+
+A user cannot directly reach the container from internet
+
+So for this we have to do portMapping/port Forwarding
+
+Port mapping has to be done at the time of container creation i.e. at the runtime
+
+Once the container is created, you cannot do port mapping
+
+If you forgot to do port mapping, you will have to recreate the container
+
+Port mapping is done by using the option is -p
+
+The command will be:
+
+  docker run -d --name n2 -p <systemport>:containerport nginx
+
+example:
+
+ docker run -d --name n2 -p 8989:80 nginx
+
+
+Process of accessing the container from browser is
+
+ public_ipaddress_ofEC2:System_portnumber
+
+Example:
+
+   3.145.182.255:8989
+
+
+A system port cannot be associated to 2 container
+
+
+If you dont know what system port number to use
+
+OR If youdont know what is the container port to use
+
+You can use an option called  -P  for port mapping
+
+-P : in this case docker will do the systemport and container port mapping, user doesnot have to give any port number
+
+
+Example: docker run -d --name h1 -P httpd
+
+VOlumes / Storage in Docker Containers:
+
+********************************
+
+
+Scenario 1: Preserve the data of the container on the host machine, so that even if container is deleted, that data 
+should very much be available ont he host
+
+Volume is represented with -v option
+
+you have to create a volume(Named volume)
+
+docker volume create myvol
+
+Check the volume details:
+
+ docker volume inspect myvol
+
+
+Path where the colume is created is:
+/var/lib/docker/volumes/myvol/_data
+
+Attach/mount the volume to containers directory:
+
+docker run -it --name u2 -v myvol:/tmp ubuntu
+
+ # cd /tmp
+ # touch file1 file2
+
+ctlPQ
+
+cd /var/lib/docker/volumes/myvol/_data
+
+ls
+
+I could see the container file -> file1 file2
+
+Delete the container, still in the vol dire , you will see the files
+
+Scenario 2: Use the data preserved in the volume on a new container
+
+How we can mount volumes data on to the new container
+
+docker run -it --name u3 -v myvol:/tmp ubuntu
+
+
+Scenario 3: How multiple containers can share the data
+
+
+
+
+Another type of volume is : Bind mounts
+
+In this kind of volume, any directory of the host machine can be mounted on the container
+
+
+In GIT we have got a repo -- with code:
+
+  368  git clone https://github.com/Sonal0409/ecomm.git
+  369  ls
+  370  cd ecomm
+  371  ls
+  372  pwd
+  373  docker run -d --name web -P -v /root/ecomm/:/usr/local/apache2/htdocs/  httpd
+  374  docker ps -a
+  375  clear
+  376  docker ps -a
+  377  ls
+  378  git pull origin master
