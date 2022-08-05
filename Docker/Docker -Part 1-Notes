@@ -1,0 +1,148 @@
+
+Docker Notes:
+
+
+A node/server where docker is installed is called as DOCKER HOST
+
+
+
+note: install docker on the instance which has jenkins
+
+Install Docker
+
+yum install docker -y
+
+Start docker service
+
+systemctl start docker
+
+Docker hub is the public registry for all Base images:
+
+https://hub.docker.com/
+
+
+Image name is like this 
+
+  ImageName:tagname
+
+Pull an Image to local:
+
+
+	docker pull ubuntu
+
+	docker pull ubuntu:18.04
+
+How to check if images is pulled to local or not:
+
+	docker images
+
+How to delete an Image from docker Host- Local
+
+ 	docker rmi <imageName>
+	docker rmi ubuntu:18.04
+
+
+
+Launch a container:
+
+
+ 	docker run ubuntu
+
+> it will check if image is not there locally, then pull the image form docker hub
+
+> Then run the image to launch a container
+
+To check containers created :
+
+ docker ps -a
+
+
+Launch container with unique name
+
+docker run --name u1 ubuntu
+
+To start a container there are 2 modes
+
+
+Mode 1: Foreground mode (-it)
+
+When a container is started in a forground mode, 
+
+Container will be created and running & then the user will be logged on the container
+
+	docker run -it --name u2 ubuntu
+
+
+Comeout of the container:
+
+CTLpq  ==> you will out of container & container will be up & running
+
+
+Mode 2: detached mode (-d)
+
+Container will be created and running & then the user will be detached from the container
+Container will be running in the background
+
+	docker run --name n1 -d nginx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
