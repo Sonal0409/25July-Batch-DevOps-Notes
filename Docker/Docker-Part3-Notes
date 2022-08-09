@@ -1,0 +1,151 @@
+Create a dockerfile using FROM, RUN, VOLUME keyword
+
+
+mkdir mydockerfiles
+cd mydockerfiles
+vim dockerfile
+
+
+FROM ubuntu
+RUN apt-get -y update
+RUN apt-get install git -y
+VOLUME /mydata
+
+
+Command to build dockerfile into an Image:
+
+
+  $ docker build -t image01 .
+
+ Check the image 
+
+$ docker images
+
+Run the image
+
+$ docker run -it --name c1 image01
+
+  # git --version
+  # cd mydata
+  # touch file1 file2
+
+comeout of container
+
+$ docker inspect < containerid>
+
+check mount section for volume path
+
+
+2. Write a dockerfile for FROM, COPY & ADD, CMD
+
+In the same directory crreate 2 files
+
+$ touch copy.txt add.txt
+
+
+FROM busybox
+COPY copy.txt /tmp
+ADD add.txt /tmp
+CMD ["sh"]
+
+
+  $ docker build -t image02 .
+
+
+3. tar file add to container
+
+
+touch compress.txt
+
+tar -czvf compress.tar.gz compress.txt
+
+vim dockerfile
+
+
+
+FROM busybox
+COPY copy.txt /tmp
+ADD compress.tar.gz /etc
+CMD ["sh"]
+
+
+$ docker build -t image03 .
+
+***************************************
+
+
+Continous integration / Continous Deployment
+
+
+code >> compiled >> test >> packaged (addressbook.war)
+
+
+Take this addressbook.war file and place it on a container
+
+So on the container we will need tomcat application
+
+
+What will be dockerfile for it then?
+
+
+FROM tomcat:9
+ADD addressbook.war /usr/local/tomcat/webapps
+EXPOSE 8080
+CMD ["catalina.sh", "run"]
+
+
+We want to deploy it from Jenkins
+
+So first get the path of your war file
+
+Go to the package job created earlier, og to the 1st build, scroll down at the end
+
+you will find the path where your address book is, copy the path
+
+for me it is:
+
+/var/lib/jenkins/workspace/5.Package/target/addressbook.war
+
+
+Now create a new job in Jenkins for deployment
+
+
+
+
+
+
+Jenkins ALL=NOPASSWD: ALL
+
+
+
+
+
+Image name in docker gives complete information from where to pull or push the images
+
+
+Push the images to docker hub
+
+A user will always push into his docker hub registry
+
+You need to mention the repository name on the image itself, for docker to push it
+
+docker push imagename
+
+docker push image01 ==> this fail, due to lack of permission to push image on docker hub librabry
+
+
+
+A user will always push into his docker hub registry
+
+for this ==> chnage the image name to include you repo name
+
+
+  docker tag image01 sonal04/image01
+
+ docker push sonal04/image01 ==> it will fail, because docker cannot authenticat to your repo
+
+so we need to first logon to docker hub from host
+
+$ docker login
+
+once logged in to docker hub from host, then do docker push
