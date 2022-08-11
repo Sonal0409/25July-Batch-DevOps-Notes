@@ -1,0 +1,55 @@
+
+YAML files for kubernetes will consist of 4 main section
+
+1. apiVersion:
+   __________________
+ - kubernetes schema that will be used to create the object
+2. kind:
+   _______________
+ - kubernetes object that we wnat to create
+3. metadata:
+  _________________
+ - Name, label of the object
+4. spec:
+  _____________
+ - what is that that we want on the object
+
+
+Lets now write a YAML to so as to create first object of kubernetes called as POD
+
+vim pod-defintion.yml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+ name: pod1
+ labels:
+  app: java
+  author: sonal
+spec:
+ containers:
+  - name: c1
+    image: nginx
+
+
+kubectl create -f pod-defintion.yml
+
+kubectl get pods
+
+
+to check where the pod is created
+
+kubectl get pods -o wide
+
+Show labels on the pod
+
+kubectl get pods --show-labels
+
+Query pods using labels:
+
+kubectl get pods -l author=sonal
+
+Go inside and connect to the container on pod
+
+kubectl exec -it pod1 -- bash
