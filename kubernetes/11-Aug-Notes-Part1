@@ -53,3 +53,24 @@ kubectl get pods -l author=sonal
 Go inside and connect to the container on pod
 
 kubectl exec -it pod1 -- bash
+
+
+ReplicaSet:
+
+  534  vim ReplicaSet.yml
+  535  kubectl get pods -l app=nginx
+  536  kubectl apply -f ReplicaSet.yml
+  537  kubectl get pods -l app=nginx
+  
+  Service object:
+  
+  551  vim service.yml
+  552  kubectl create -f service.yml
+  553  kubectl get all
+  554  kubectl get nodes -o wide
+  
+  Command to open port on GCP:
+  gcloud compute firewall-rules create rule1 --allow tcp:30008
+  
+  everytime chnage the rule name pls.
+  
