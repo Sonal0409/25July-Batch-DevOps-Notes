@@ -1,0 +1,15 @@
+
+Helm install
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+# Use GKE
+helm repo add bitnami https://charts.bitnami.com/bitnami
+ helm install my-release bitnami/jenkins
+helm list
+#Wait for 2 mins to see Jenkins UP
+kubectl get deploy
+kubectl get pods
+kubectl get svc
