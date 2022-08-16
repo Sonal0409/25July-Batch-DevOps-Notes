@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+ name: myrs
+spec:
+ replicas: 6
+ selector:
+  matchLabels:
+   app: nginx
+ template:
+  metadata:
+   name: pod2
+   labels:
+    app: nginx
+  spec:
+   containers:
+    - name: c2
+      image: nginx
