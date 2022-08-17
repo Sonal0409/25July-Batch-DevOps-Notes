@@ -1,0 +1,14 @@
+- hosts: webservers
+  become: true
+  become_user: root
+  tasks:
+  - name: Install tomcat on the host
+    yum: name=tomcat state=present
+  - name: Start tomcat on the host
+    service: name=tomcat state=started
+  - name: Deploy a war on tomcat
+    get_url:
+     url=https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+     dest=/usr/share/tomcat/webapps
+  - name: retsart tomcat application
+    service: name=tomcat state=restarted
