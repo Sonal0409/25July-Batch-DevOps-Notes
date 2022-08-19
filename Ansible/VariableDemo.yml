@@ -1,0 +1,16 @@
+ - hosts: localhost
+   become: true
+   become_user: root
+   gather_facts: false
+   vars_prompt:
+   - name: pkg_name1
+     prompt: Enter your package Name
+     private: false
+   - name: service_name1
+     prompt: Enter the service to start
+     private: false
+   tasks:
+   - name: Install a package
+     yum: name={{pkg_name1}} state=present
+   - name: Start a service
+     service: name={{service_name1}} state=started
