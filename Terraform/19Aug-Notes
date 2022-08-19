@@ -1,0 +1,379 @@
+Launch the lab 
+************************
+Steps to  Launch the Lab from LMS
+
+> Go to https://lms.simplilearn.com/
+> Click on to Program button under Post Graduate Program in DevOps 
+> Select Course 2 - PD DO - DevOps Certification Training
+> Go to Practice Lab on left side and click on it
+> Click on DevOps in AWS V2
+> Click on Launch Lab button at right bottom
+> Click on RDP (Remote Desktop protocol) access 
+> Click on Start Instance button and click Yes
+> It will take a while for the lab environment to start. Pls wait
+> Click on RDP Access
+> Click on Auth URL - blue button - to launch the lab
+> Lab will launch , click on OK button to proceed
+> Lab desktop will launch
+
+
+Check Ansible Installation:
+*****************************
+$ ansible –version
+
+Establish SSH connection controller machine and host machine:
+*************************
+Establish SSH key pair in linux system to have SSH connectivity with localhost using the following commands:
+
+$ ssh-keygen -t rsa (Press Enter when asked for File and Paraphrase details)
+
+$ cat .ssh/id_rsa.pub >> .ssh/authorized_keys
+
+[OR] when connecting with public server host
+
+$ ssh-copy-id -i username@ipHost
+
+Add the host ‘localhost’  in ansible host file:
+
+$ vim /etc/ansible/hosts
+
+
+[webservers]
+localhost:42006
+
+
+
+Ad Hoc Commands in Ansible
+
+
+$ ansible webservers -m ping
+$ ansible webservers -m command -a "df -h"
+$ ansible webservers -m command -a “uptime”
+$ ansible webservers -m copy -a "content='hello from Ansible' dest=/tmp/newfile.txt”
+$ ansible webservers -m command -a "cat /tmp/newfile.txt"
+
+
+
+
+OR  if getting permission denial error → remove the entry from host file of [webserver], save the file
+
+$ ansible localhost -m ping
+$ ansible localhost -m command -a "df -h"
+$ ansible localhost -m command -a “uptime”
+$ ansible localhost -m copy -a "content='hello from Ansible' dest=/tmp/newfile.txt”
+$ ansible localhost -m command -a "cat /tmp/newfile.txt"
+
+
+Playbooks in Ansible
+
+Create the index.html
+
+$ pwd   ⇒ /etc/ansible
+$ vim index.html
+ Write any text and save the file
+$ vim playbook1.yml
+
+- hosts: localhost
+  become: true
+  tasks:
+  - name: update repo
+    command: apt update -y
+  - name: Install a package apache2
+    apt: name=apache2 state=present
+  - name: Start apache2 service
+    service: name=apache2 state=started
+  - name: Deploy index.html file
+    copy: src=index.html dest=/var/www/html
+  - name: restart apache2 server
+    service: name=apache2 state=restarted
+ansible-playbook playbook1.yml –syntax-check
+
+ansible-playbook playbook1.yml
+
+Go to browser : localhost:80
+
+How to define Variables in ansible & how to refer variables
+
+Var_name: value
+Refer ⇒ {{var_name}}
+
+- hosts: localhost
+  become: true
+  vars:
+   pkg_name: apache2
+   dest_path: /var/www/html
+  tasks:
+  - name: update repo
+    command: apt update -y
+  - name: Install a package {{pkg_name}}
+    apt: name={{pkg_name}} state=present
+  - name: Start apache2 service
+    service: name={{pkg_name}} state=started
+  - name: Deploy index.html file
+    copy: src=index.html dest={{dest_path}}
+  - name: restart apache2 server
+    service: name={{pkg_name}} state=restarted
+
+Handlers:
+- hosts: localhost
+  become: true
+  vars:
+   pkg_name: apache2
+   dest_path: /var/www/html
+  tasks:
+  - name: update repo
+    command: apt update -y
+    tags: update
+  - name: Install a package {{pkg_name}}
+    apt: name={{pkg_name}} state=present
+    tags: install
+  - name: Start apache2 service
+    service: name={{pkg_name}} state=started
+  - name: Deploy index.html file
+    copy: src=index.html dest={{dest_path}}
+    notify: restart apache2 server
+    tags: deploy
+  handlers: 
+  - name: restart apache2 server
+    service: name={{pkg_name}} state=restarted
+
+
+
+
+Ansible-playbook playbook1.yml –tags=install,deploy,update
+
+
+
+Roles in Ansible
+
+
+
+
+Ansible Roles:
+****************
+
+Roles  is just a directory which consists of 7 other sub directories
+You can manually create roles and its subdirectories or 
+you can use ansible command to create roles and its subdirectories
+
+Each subdirectory will consist of yaml files 
+
+$ cd /etc/ansible
+$ cd roles
+$ ansible-galaxy init demor
+$ cd demor
+
+Create the jinja2 template:
+
+$ vim templates/demor.j2
+
+Welcome to {{ ansible_hostname }}
+
+This file was created on {{ ansible_date_time.date }}
+Go away if you have no business being here
+
+Contact {{ system_manager }} if anything is wrong
+
+
+
+$ vim tasks/main.yml
+---
+# tasks file for demor
+- name: copy demor file
+  template:
+     src: templates/demor.j2
+     dest: /etc/demor
+     owner: root
+     group: root
+     mode: 0444
+
+$ vim vars/main.yml
+---
+
+system_manager: default@default.com
+
+
+If you want you can delete extra directories
+
+$ cd demor
+$ rm -rf handlers tests defaults files
+$ cd ..
+
+Use the role:
+$ cd /etc/ansible
+$ vim playbook3.yml
+---
+- name: use demor role playbook
+  hosts: webservers
+  become: true
+  roles:
+  - demor
+      
+
+Run the playbook:
+$ ansible-playbook demor-role.yml
+
+
+$ cat /etc/demor
+
+
+
+
+
+
+
+
+
+
+Terraform:
+
+
+
+
+Setup Terraform:
+
+Execute below command to install terraform:
+
+$ wget https://releases.hashicorp.com/terraform/0.14.9/terraform_0.14.9_linux_amd64.zip
+
+Instal unzip package if it is not available on your lab
+
+$ sudo apt-get install -y unzip
+
+Unzip the terraform_0.14.9_linux_amd64.zip file
+
+$ unzip terraform_0.14.9_linux_amd64.zip
+
+$ sudo mv terraform /usr/local/bin/
+
+Verify:
+$ terraform -version
+
+
+AWS CLI Installation for authentication:
+$ pip install awscli
+$ aws --version
+
+
+Terraform code files:
+
+mkdir myterrafiles
+cd myterrafiles
+
+vim ec2resource.tf
+
+provider "aws" {
+
+  region     = "us-east-1"
+  access_key = " "
+ secret_key = " "
+  token = " "
+}
+
+
+:wq!
+
+$ terraform init
+
+
+resource "aws_instance" "myec2" {
+
+  ami = "ami-0f9fc25dd2506cf6d"
+
+  instance_type = "t2.micro"
+
+}
+
+
+
+$ terraform validate
+
+$ terraform plan
+
+$ terraform apply
+
+
+
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance
+
+
+
+
+
+
+
+
+resource "aws_eip" "lb1"{
+
+  vpc = true
+
+}
+
+
+$ terraform init
+$ terraform plan
+$ terraform apply
+$ terraform destroy
+
+
+Create s3 Bucket – Assignment
+
+resource "aws_s3_bucket" "b" {
+  bucket = "my-tf-test-bucket-sdfsdf"
+
+
+  tags = {
+    Name        = "My bucket"
+    Environment = "Dev"
+  }
+}
+
+
+
+
+
+provider "aws" {
+
+ region     = "us-east-1"
+
+ access_key = "ASIASRDSUWKH4IXETF2G"
+
+ secret_key = "j0RGlqvTYXu/Ojo15gohNZ+Ssc7EAh/TCVB6NPbV"
+
+  token = "FwoGZXIvYXdzEMv//////////wEaDG39i2wXAtCU/1M5WCK5AZCgJdb37hp+xosNhRV2xXNcV/aRysZc0YyVOQGSHBYqRBvEy9fAJXIk9PWlA/dkE8yd7JQdY6RNXM571BViABzzB+ZkZFk15YyvoJKQHkVb9onHH4ohfSH7pKFUPA9+PCkYVX5kwfQQn/YacSjFLeKdp/plGbDU0ir6KUh2OzuckY1y4je2CSmbUBpQUu793n0saPRSM5Ajne53WwerKaBFu4HAUm41FDkoIiXjDHfJMzZ9yA2v5tMJKJSylJMGMi20Q3z66fljxKA03WOKvqRLv41EJMhH8jSSoeyopFIkE8niZbTxGUDeg9lk3Ao="
+
+}
+
+resource "aws_instance" "myec2" {
+
+  ami = "ami-0f9fc25dd2506cf6d"
+
+  instance_type = "t2.micro"
+
+ count = 3
+
+}
+
+resource "aws_s3_bucket" "mys3" {
+
+ bucket = "my-123test1234-bucket"
+
+tags = {
+
+    Name        = "My bucket"
+
+    Environment = "Dev"
+
+  }
+
+}
+
+$ terraform apply
+
+$ terraform destroy
+
+
+
+
+
