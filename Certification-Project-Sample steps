@@ -1,0 +1,25 @@
+Introduction to project:
+
+Solution:
+
+1. Screenshot and link of git repo
+2. screenshot of CI pipeline in Jnekins
+    > create a pipeline job with stages as compile, clone the repo, test and package
+Share the pipeline code also
+
+3.  create a docker file  create an image  push to image to dockerhub
+Screenshot of that
+
+4. Ansible  git hub repo in this place inventory file with ip address of slave
+  Write your playbook
+	Install docker
+	 Start docker
+	Command to run the image that was previously pushed to docker hub
+Share your playbook
+
+Screenshot fo container up and running
+Share screenshot of address application
+
+Go to Jenkins create pipeline code to run the playbook.
+
+Shrare the entire document to edureak
